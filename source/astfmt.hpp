@@ -1,52 +1,50 @@
 #pragma once
 #include "ast.hpp"
 
-#include <sstream>
+#include <fmt/format.h>
 
-namespace lince {
-struct ASTFormatter {
+template <> struct fmt::formatter<lince::AST> {
   int NIndent = 0;
-  static std::ostream &Indent(std::ostream &OS) { return OS << "  "; }
 
-  static std::ostream &Indent(std::ostream &OS, int N) {
+  template <typename OutIt> static OutIt Indent(OutIt O) { return format_to(O, " "); }
+
+  template <typename OutIt> static OutIt Indent(OutIt O, int N) {
     while (N--)
-      OS << Indent;
-    return OS;
+      O = Indent(O);
+    return O;
   }
 
-  std::ostream &writeChar(std::ostream &OS, char C) {
-    OS << C;
+  template <typename OutIt> OutIt writeChar(OutIt O, char C) {
+    format_to(O, "{}", C);
     if (C == '\n')
-      Indent(OS, NIndent);
-    return OS;
+      Indent(O, NIndent);
+    return O;
   }
 
-  std::string operator()(std::string_view ASTS) {
+  template <typename ParseContext> auto parse(ParseContext &C) {
+    return C.begin();
+  }
+
+  template <typename FormatContext>
+  auto format(const lince::AST &A, FormatContext &C) {
     NIndent = 0;
-    std::ostringstream OSS;
+    auto ASTS = A.dump();
     for (char X : ASTS) {
       if (X == '{' || X == '[') {
         NIndent++;
-        writeChar(OSS, X);
-        writeChar(OSS, '\n');
+        writeChar(C.out(), X);
+        writeChar(C.out(), '\n');
       } else if (X == '}' || X == ']') {
         NIndent--;
-        writeChar(OSS, '\n');
-        writeChar(OSS, X);
+        writeChar(C.out(), '\n');
+        writeChar(C.out(), X);
       } else if (X == ',') {
-        writeChar(OSS, X);
-        writeChar(OSS, '\n');
+        writeChar(C.out(), X);
+        writeChar(C.out(), '\n');
       } else {
-        writeChar(OSS, X);
+        writeChar(C.out(), X);
       }
     }
-    return OSS.str();
+    return C.out();
   }
 };
-
-inline std::string format(AST *A) {
-  ASTFormatter AF;
-  return AF(A->dump());
-}
-
-} // namespace lince

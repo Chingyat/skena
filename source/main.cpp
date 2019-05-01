@@ -1,9 +1,13 @@
+#define FMT_STRING_ALIAS 1
+
 #include "astfmt.hpp"
 #include "interpreter.hpp"
 #include "stdlib.hpp"
 
 #include <readline/history.h>
 #include <readline/readline.h>
+
+#include <fmt/format.h>
 
 #include <cmath>
 #include <iostream>
@@ -59,11 +63,11 @@ int main() {
       if (!AST)
         continue;
       lince::Value V;
-      std::cout << format(AST.get()) << '\n';
+      print(fmt("{}\n"), *AST);
       Calc.eval(AST.get(), V);
-      std::cout << V.Info() << '\n';
+      print(fmt("{}\n"), V.Info());
     } catch (std::exception &E) {
-      std::cout << "Error: " << E.what() << '\n';
+      print(fmt("{}\n"), E.what());
     }
   }
 }

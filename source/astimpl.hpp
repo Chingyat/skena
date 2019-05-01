@@ -1,11 +1,13 @@
-#include <utility>
-
 #pragma once
+
+#define FMT_STRING_ALIAS 1
+
 #include "ast.hpp"
 #include "value.hpp"
 
 #include <fmt/format.h>
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace lince {
@@ -19,7 +21,7 @@ public:
   Value eval(Interpreter *C) final;
 
   std::string dump() const final {
-    return fmt::format("Identifier {{Name: \"{}\"}}", getName());
+    return format(fmt("Identifier {{Name: \"{}\"}}"), getName());
   }
 
   const std::string &getName() const & { return Name; }
@@ -44,8 +46,8 @@ public:
   Value eval(Interpreter *C) final;
 
   std::string dump() const final {
-    return fmt::format("UnaryExpression {{Op: \"{}\",Operand: {}}}",
-                       reinterpret_cast<const char(&)[]>(Op), Operand->dump());
+    return format(fmt("UnaryExpression {{Op: \"{}\",Operand: {}}}"),
+                  reinterpret_cast<const char(&)[]>(Op), Operand->dump());
   }
 
   std::string getFunctionName() const final {
@@ -69,9 +71,9 @@ public:
   Value eval(Interpreter *C) final;
 
   std::string dump() const final {
-    return fmt::format("BinaryExpression {{Op: \"{}\",LHS: {},RHS: {}}}",
-                       reinterpret_cast<const char(&)[]>(Op), LHS->dump(),
-                       RHS->dump());
+    return format(fmt("BinaryExpression {{Op: \"{}\",LHS: {},RHS: {}}}"),
+                  reinterpret_cast<const char(&)[]>(Op), LHS->dump(),
+                  RHS->dump());
   }
 
   std::string getFunctionName() const final {
@@ -93,8 +95,8 @@ public:
   Value eval(Interpreter *) noexcept final { return V; }
 
   std::string dump() const final {
-    return fmt::format("Constant {{Value: \"{} <{}>\"}}", V.stringof(),
-                       demangle(V.Data.type().name()));
+    return format(fmt("Constant {{Value: \"{} <{}>\"}}"), V.stringof(),
+                  demangle(V.Data.type().name()));
   }
 };
 
@@ -119,8 +121,8 @@ public:
   Value eval(Interpreter *C) final;
 
   std::string dump() const final {
-    return fmt::format("CallExpression {{Name: \"{}\",Args: {}}}", Name,
-                       dumpASTArray(Args));
+    return format(fmt("CallExpression {{Name: \"{}\",Args: {}}}"), Name,
+                  dumpASTArray(Args));
   }
 
   std::vector<std::string> getParams() const final;
@@ -140,8 +142,8 @@ public:
   Value eval(Interpreter *C) final;
 
   std::string dump() const final {
-    return fmt::format("LambdaCall {{Lambda: {},Args: {}}}", Lambda->dump(),
-                       dumpASTArray(Args));
+    return format(fmt("LambdaCall {{Lambda: {},Args: {}}}"), Lambda->dump(),
+                  dumpASTArray(Args));
   }
 };
 
@@ -157,8 +159,8 @@ public:
   Value eval(Interpreter *C) final;
 
   std::string dump() const final {
-    return fmt::format(
-        "IfExpression {{Condition: {},ThenClause: {},ElseClause: {}}}",
+    return format(
+        fmt("IfExpression {{Condition: {},ThenClause: {},ElseClause: {}}}"),
         Condition->dump(), Then->dump(), Else ? Else->dump() : "nil");
   }
 };
@@ -179,8 +181,8 @@ public:
   }
 
   std::string dump() const final {
-    return fmt::format("WhileExpression {{Condition: {}, Body: {}}}",
-                       Condition->dump(), Body->dump());
+    return format(fmt("WhileExpression {{Condition: {}, Body: {}}}"),
+                  Condition->dump(), Body->dump());
   }
 };
 
@@ -199,8 +201,8 @@ public:
   }
 
   std::string dump() const final {
-    return fmt::format("TranslationUnitAST {{ExpressionList: {}}}",
-                       dumpASTArray(ExprList));
+    return format(fmt("TranslationUnitAST {{ExpressionList: {}}}"),
+                  dumpASTArray(ExprList));
   }
 };
 

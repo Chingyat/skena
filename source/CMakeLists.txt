@@ -1,17 +1,21 @@
-add_executable(calc
-               main.cpp
+add_library(skena
                interpreter.cpp
                astimpl.cpp
                parser.cpp
                demangle.cpp)
 
-target_link_libraries(calc Threads::Threads)
-target_compile_features(calc PUBLIC cxx_std_17)
+add_executable(skena_repl main.cpp)
 
-target_link_libraries(calc Readline::Readline)
+target_link_libraries(skena_repl PRIVATE skena Readline::Readline)
+
+target_link_libraries(skena PRIVATE Threads::Threads)
+
+target_compile_features(skena PUBLIC cxx_std_17)
+
 
 add_library(stdlib stdlib.cpp)
 target_compile_features(stdlib PUBLIC cxx_std_17)
 
-target_link_libraries(calc stdlib)
-target_link_libraries(calc fmt::fmt)
+set_property(TARGET stdlib PROPERTY OUTPUT_NAME skena_stdlib)
+
+target_link_libraries(skena PUBLIC stdlib fmt::fmt)

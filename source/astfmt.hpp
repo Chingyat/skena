@@ -6,7 +6,9 @@
 template <> struct fmt::formatter<lince::AST> {
   int NIndent = 0;
 
-  template <typename OutIt> static OutIt Indent(OutIt O) { return format_to(O, " "); }
+  template <typename OutIt> static OutIt Indent(OutIt O) {
+    return format_to(O, " ");
+  }
 
   template <typename OutIt> static OutIt Indent(OutIt O, int N) {
     while (N--)

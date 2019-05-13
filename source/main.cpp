@@ -13,12 +13,8 @@
 #include <iostream>
 #include <string_view>
 
-struct free_str {
-  void operator()(char *Str) noexcept { free(Str); }
-};
-
 bool readExpr(std::string &Expr) {
-  std::unique_ptr<char, free_str> Input(readline(">> "));
+  std::unique_ptr<char[], void (*)(void *)> Input(readline(">> "), ::free);
   if (!Input)
     return false;
   add_history(Input.get());

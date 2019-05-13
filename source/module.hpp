@@ -72,4 +72,9 @@ Function BinaryFunction(Callable Func) {
       lince::Signature<Type>::TypeIndices()};
 }
 
+template <typename Type, typename Callable>
+Function makeFunction(Callable &&callable) {
+  // TODO
+}
+
 } // namespace lince

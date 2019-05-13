@@ -4,7 +4,6 @@
 namespace lince {
 
 struct BinaryOperator {
-
   std::string Op;
   Function Func;
 };
